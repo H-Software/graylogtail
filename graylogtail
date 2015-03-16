@@ -47,7 +47,9 @@ cmdline.add_option('--debug', '-D', action='store_true', default=False,
                     help='Provide more verbose logging for debugging.')
 cmdline.add_option('--level', action='store', default="info",
                     choices=('critical', 'error', 'warning', 'info', 'debug'),
-                    help='Specify the level messages should be logged at. Default to info')
+                    help='Specify the level messages should be logged at. Default to info'),
+cmdline.add_option('--exclude-string', '-x', action='store', default="",
+                    help='Exclude line if line contains this string.')
 options, arguments = cmdline.parse_args()
 
 if (len(arguments) != 1):
@@ -184,19 +186,37 @@ def main():
     # graylog.
     try:
         for line in input:
-            if (not options.dry_run):
-                if options.level == "critical":
-                    graylog.critical(line.rstrip())
-                elif options.level == "error":
-                    graylog.error(line.rstrip())
-                elif options.level == "warning":
-                    graylog.warning(line.rstrip())
-                elif options.level == "debug":
-                    graylog.debug(line.rstrip())
+            if (len(options.exclude_string) == 0):
+                if (not options.dry_run):
+                    if options.level == "critical":
+                        graylog.critical(line.rstrip())
+                    elif options.level == "error":
+                        graylog.error(line.rstrip())
+                    elif options.level == "warning":
+                        graylog.warning(line.rstrip())
+                    elif options.level == "debug":
+                        graylog.debug(line.rstrip())
+                    else:
+                        graylog.info(line.rstrip())
                 else:
-                    graylog.info(line.rstrip())
+                    print "[%s] %s" % (options.level.upper(), line.rstrip())
             else:
-                print "[%s] %s" % (options.level.upper(), line.rstrip())
+                if (line.find(options.exclude_string) == -1):
+                    if (not options.dry_run):
+                        if options.level == "critical":
+                            graylog.critical(line.rstrip())
+                        elif options.level == "error":
+                            graylog.error(line.rstrip())
+                        elif options.level == "warning":
+                            graylog.warning(line.rstrip())
+                        elif options.level == "debug":
+                            graylog.debug(line.rstrip())
+                        else:
+                            graylog.info(line.rstrip())
+                    else:
+                        print "[%s] %s" % (options.level.upper(), line.rstrip())
+                else:
+                    logger.warning('exclude line %s ' % lineno())
 
     except Exception, e:
         print "Exception caught at %s: %s" % (lineno(), e)
