@@ -216,7 +216,7 @@ def main():
                     else:
                         print "[%s] %s" % (options.level.upper(), line.rstrip())
                 else:
-                    logger.warning('exclude line %s ' % lineno())
+                    logger.debug('exclude line %s ' % lineno())
 
     except Exception, e:
         print "Exception caught at %s: %s" % (lineno(), e)
