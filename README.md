@@ -20,4 +20,6 @@ periodically to a Graylog2 server via running on cron.
       -D, --debug           Provide more verbose logging for debugging.
       --level=LEVEL         Specify the level messages should be logged at.
                             Default to info
-      -x, --exclude-string  if the line contains that string,  line will not be sent to graylog
+      -x, --exclude-string="excluded string"
+			    if the line(=message) contains string same as in variable,
+			    line will not be sent to graylog server
