@@ -131,6 +131,24 @@ def end_locking(lockfile_fd, lockfile_name):
     logger.debug("Unlocking successful")
     return
 
+def parse_line():
+    global options
+    global graylog
+
+    if (not options.dry_run):
+        if options.level == "critical":
+            graylog.critical(line.rstrip())
+        elif options.level == "error":
+            graylog.error(line.rstrip())
+        elif options.level == "warning":
+            graylog.warning(line.rstrip())
+        elif options.level == "debug":
+            graylog.debug(line.rstrip())
+        else:
+            graylog.info(line.rstrip())
+    else:
+        print "[%s] %s" % (options.level.upper(), line.rstrip())
+
 def main():
     dirsafe_logfile = log_file.replace('/','-')
     logtail_state_file = '%s/graylogtail-%s.state' % (state_dir, dirsafe_logfile)
@@ -187,34 +205,10 @@ def main():
     try:
         for line in input:
             if (len(options.exclude_string) == 0):
-                if (not options.dry_run):
-                    if options.level == "critical":
-                        graylog.critical(line.rstrip())
-                    elif options.level == "error":
-                        graylog.error(line.rstrip())
-                    elif options.level == "warning":
-                        graylog.warning(line.rstrip())
-                    elif options.level == "debug":
-                        graylog.debug(line.rstrip())
-                    else:
-                        graylog.info(line.rstrip())
-                else:
-                    print "[%s] %s" % (options.level.upper(), line.rstrip())
+                parse_line(line)
             else:
                 if (line.find(options.exclude_string) == -1):
-                    if (not options.dry_run):
-                        if options.level == "critical":
-                            graylog.critical(line.rstrip())
-                        elif options.level == "error":
-                            graylog.error(line.rstrip())
-                        elif options.level == "warning":
-                            graylog.warning(line.rstrip())
-                        elif options.level == "debug":
-                            graylog.debug(line.rstrip())
-                        else:
-                            graylog.info(line.rstrip())
-                    else:
-                        print "[%s] %s" % (options.level.upper(), line.rstrip())
+                    parse_line(line)
                 else:
                     logger.debug('exclude line %s ' % lineno())
 
