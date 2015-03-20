@@ -132,6 +132,9 @@ def end_locking(lockfile_fd, lockfile_name):
     return
 
 def parse_line():
+    global options
+    global graylog
+
     if (not options.dry_run):
         if options.level == "critical":
             graylog.critical(line.rstrip())
@@ -202,10 +205,10 @@ def main():
     try:
         for line in input:
             if (len(options.exclude_string) == 0):
-                parse_line()
+                parse_line(line)
             else:
                 if (line.find(options.exclude_string) == -1):
-                    parse_line()
+                    parse_line(line)
                 else:
                     logger.debug('exclude line %s ' % lineno())
 
