@@ -131,7 +131,7 @@ def end_locking(lockfile_fd, lockfile_name):
     logger.debug("Unlocking successful")
     return
 
-def parse_line():
+def parse_line(line):
     global options
     global graylog
 
